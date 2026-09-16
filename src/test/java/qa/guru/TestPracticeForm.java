@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
 
@@ -16,6 +17,10 @@ public class TestPracticeForm {
     @BeforeAll
     static void setup() {
         Configuration.baseUrl = "https://demoqa.com";
+    }
+
+    private void checkRow(String label, String value) {
+        $(".table-responsive").$(byText(label)).parent().shouldHave(text(value));
     }
 
     // ---------- Позитивные тесты
@@ -27,68 +32,49 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Основная информация
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Дебаг");
-        $("input#lastName")
-                .shouldBe(Condition.editable).setValue("Логов");
-        $("#userEmail")
-                .shouldBe(Condition.editable).setValue("please_work_finally@test.ru");
-        $("input.form-check-input[value='Male']")
-                .shouldBe(Condition.clickable).click();
-        $("#userNumber")
-                .shouldBe(Condition.editable).setValue("7404500200");
+        $("input#firstName").setValue("Дебаг");
+        $("input#lastName").setValue("Логов");
+        $("#userEmail").setValue("please_work_finally@test.ru");
+        $("input.form-check-input[value='Male']").click();
+        $("#userNumber").setValue("7404500200");
 
         // Заполнение даты рождения через календарь
-        $("#dateOfBirthInput")
-                .shouldBe(Condition.clickable).click();
-        $("select.react-datepicker__year-select")
-                .shouldBe(Condition.interactable).selectOption("1990");
-        $(".react-datepicker__month-select")
-                .shouldBe(Condition.interactable).selectOption("April");
+        $("#dateOfBirthInput").click();
+        $("select.react-datepicker__year-select").selectOption("1990");
+        $(".react-datepicker__month-select").selectOption("April");
         $$(".react-datepicker__day").findBy(text("14")).click();
 
         // Выбор предметов
-        $("#subjectsInput")
-                .shouldBe(Condition.editable).setValue("Maths").pressEnter();
-        $("#subjectsInput")
-                .shouldBe(Condition.editable).setValue("Economics").pressEnter();
-        $("#subjectsInput")
-                .shouldBe(Condition.editable).setValue("English").pressEnter();
+        $("#subjectsInput").setValue("Maths").pressEnter();
+        $("#subjectsInput").setValue("Economics").pressEnter();
+        $("#subjectsInput").setValue("English").pressEnter();
 
         // Выбор хобби
-        $x("//label [text()='Sports']")
-                .shouldBe(Condition.clickable).click();
-        $x("//label [text()='Music']")
-                .shouldBe(Condition.clickable).click();
+        $("#hobbiesWrapper").$$("label").findBy(text("Sports")).click();
+        $("#hobbiesWrapper").$$("label").findBy(text("Music")).click();
 
         // Выбор картинки
         $("#uploadPicture").uploadFromClasspath("alan-wake-2.jpg");
 
         // Заполнение адреса
-        $("#currentAddress")
-                .shouldBe(Condition.editable).setValue("Room 101, Heart o' the City Hotel, 2200 Cyber Avenue");
-        $("#state input")
-                .shouldBe(Condition.interactable).setValue("Uttar Pradesh").pressEnter();
-        $("#city input")
-                .shouldBe(Condition.interactable).setValue("Lucknow").pressEnter();
+        $("#currentAddress").setValue("Room 101, Heart o' the City Hotel, 2200 Cyber Avenue");
+        $("#state input").setValue("Uttar Pradesh").pressEnter();
+        $("#city input").setValue("Lucknow").pressEnter();
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка данных в таблице ответа
-        $(".table-responsive").shouldHave(
-                text("Student Name %s".formatted("Дебаг Логов")),
-                text("Student Email %s".formatted("please_work_finally@test.ru")),
-                text("Gender %s".formatted("Male")),
-                text("Mobile %s".formatted("7404500200")),
-                text("Date of Birth %s %s,%s".formatted("14", "April", "1990")),
-                text("Subjects %s, %s, %s".formatted("Maths", "Economics", "English")),
-                text("Hobbies %s, %s".formatted("Sports", "Music")),
-                text("Picture %s".formatted("alan-wake-2.jpg")),
-                text("Address %s".formatted("Room 101, Heart o' the City Hotel, 2200 Cyber Avenue")),
-                text("State and City %s %s".formatted("Uttar Pradesh", "Lucknow"))
-        );
+        checkRow("Student Name", "Дебаг Логов");
+        checkRow("Student Email", "please_work_finally@test.ru");
+        checkRow("Gender", "Male");
+        checkRow("Mobile", "7404500200");
+        checkRow("Date of Birth", "14 April,1990");
+        checkRow("Subjects", "Maths, Economics, English");
+        checkRow("Hobbies", "Sports, Music");
+        checkRow("Picture", "alan-wake-2.jpg");
+        checkRow("Address", "Room 101, Heart o' the City Hotel, 2200 Cyber Avenue");
+        checkRow("State and City", "Uttar Pradesh Lucknow");
     }
 
     @Test
@@ -99,25 +85,18 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Заполнение обязательных полей
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Лариса");
-        $("input#lastName")
-                .shouldBe(Condition.editable).setValue("Крофтова");
-        $("input.form-check-input[value='Female']")
-                .shouldBe(Condition.clickable).click();
-        $("#userNumber")
-                .shouldBe(Condition.editable).setValue("7404500300");
+        $("input#firstName").setValue("Лариса");
+        $("input#lastName").setValue("Крофтова");
+        $("input.form-check-input[value='Female']").click();
+        $("#userNumber").setValue("7404500300");
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка данных в таблице ответа
-        $(".table-responsive").shouldHave(
-                text("Student Name %s".formatted("Лариса Крофтова")),
-                text("Gender %s".formatted("Female")),
-                text("Mobile %s".formatted("7404500300"))
-        );
+        checkRow("Student Name", "Лариса Крофтова");
+        checkRow("Gender", "Female");
+        checkRow("Mobile", "7404500300");
     }
 
     // ---------- Негативные тесты
@@ -129,16 +108,12 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Заполнение обязательных полей - без фамилии
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Лариса");
-        $("input.form-check-input[value='Female']")
-                .shouldBe(Condition.clickable).click();
-        $("#userNumber")
-                .shouldBe(Condition.editable).setValue("7404500300");
+        $("input#firstName").setValue("Лариса");
+        $("input.form-check-input[value='Female']").click();
+        $("#userNumber").setValue("7404500300");
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка невалидных полей (красный восклицательный знак)
         $("#lastName:invalid").shouldBe(Condition.visible);
@@ -171,16 +146,12 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Заполнение обязательных полей
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Лариса");
-        $("input#lastName")
-                .shouldBe(Condition.editable).setValue("Крофтова");
-        $("#userNumber")
-                .shouldBe(Condition.editable).setValue("7404500300");
+        $("input#firstName").setValue("Лариса");
+        $("input#lastName").setValue("Крофтова");
+        $("#userNumber").setValue("7404500300");
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка невалидных полей (красный восклицательный знак)
         $(".form-check-input[value='Male']:invalid").shouldBe(Condition.visible);
@@ -214,16 +185,12 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Заполнение обязательных полей - без номера телефона
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Лариса");
-        $("input#lastName")
-                .shouldBe(Condition.editable).setValue("Крофтова");
-        $("input.form-check-input[value='Female']")
-                .shouldBe(Condition.clickable).click();
+        $("input#firstName").setValue("Лариса");
+        $("input#lastName").setValue("Крофтова");
+        $("input.form-check-input[value='Female']").click();
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка невалидных полей (красный восклицательный знак)
         $("#userNumber:invalid").shouldBe(Condition.visible);
@@ -256,20 +223,14 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Заполнение полей - обязательные + некорректная почта
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Лариса");
-        $("input#lastName")
-                .shouldBe(Condition.editable).setValue("Крофтова");
-        $("input.form-check-input[value='Female']")
-                .shouldBe(Condition.clickable).click();
-        $("#userNumber")
-                .shouldBe(Condition.editable).setValue("7404500300");
-        $("#userEmail")
-                .shouldBe(Condition.editable).setValue("@please_work_finally@test.ru");
+        $("input#firstName").setValue("Лариса");
+        $("input#lastName").setValue("Крофтова");
+        $("input.form-check-input[value='Female']").click();
+        $("#userNumber").setValue("7404500300");
+        $("#userEmail").setValue("@please_work_finally@test.ru");
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка невалидного поля почты
         $("#userEmail:invalid").shouldBe(Condition.visible);
@@ -302,18 +263,13 @@ public class TestPracticeForm {
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // Заполнение полей - обязательные + некорректная почта
-        $("input#firstName")
-                .shouldBe(Condition.editable).setValue("Лариса");
-        $("input#lastName")
-                .shouldBe(Condition.editable).setValue("Крофтова");
-        $("input.form-check-input[value='Female']")
-                .shouldBe(Condition.clickable).click();
-        $("#userNumber")
-                .shouldBe(Condition.editable).setValue("740450030");
+        $("input#firstName").setValue("Лариса");
+        $("input#lastName").setValue("Крофтова");
+        $("input.form-check-input[value='Female']").click();
+        $("#userNumber").setValue("740450030");
 
         // Подтверждение
-        $("#submit")
-                .shouldBe(Condition.clickable).click();
+        $("#submit").click();
 
         // Проверка невалидного поля почты
         $("#userNumber:invalid").shouldBe(Condition.visible);

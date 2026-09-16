@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
 
@@ -21,6 +22,10 @@ public class TestReservePracticeForm {
     @BeforeAll
     static void setup() {
         Configuration.baseUrl = "https://qa-guru.github.io";
+    }
+
+    private void checkRow(String label, String value) {
+        $("#resultModal").$(byText(label)).parent().shouldHave(text(value));
     }
 
     // ---------- Позитивные тесты
@@ -35,20 +40,18 @@ public class TestReservePracticeForm {
         executeJavaScript("$('#fixedban').remove();");
 
         // Заполнение обязательных полей
-        $("#firstName").shouldBe(Condition.editable).setValue("Чупакабра");
-        $("#lastName").shouldBe(Condition.editable).setValue("Редкая");
-        $("#genterWrapper [value='Other']").shouldBe(Condition.clickable).click();
-        $("#userNumber").shouldBe(Condition.editable).setValue("7404900300");
+        $("#firstName").setValue("Чупакабра");
+        $("#lastName").setValue("Редкая");
+        $("#genterWrapper [value='Other']").click();
+        $("#userNumber").setValue("7404900300");
 
         // Подтверждение
-        $("button#submit").shouldBe(Condition.clickable).click();
+        $("button#submit").click();
 
         // Проверка данных в таблице ответа
-        $("#resultModal").shouldHave(
-                text("Student Name %s".formatted("Чупакабра Редкая")),
-                text("Gender %s".formatted("Other")),
-                text("Mobile %s".formatted("7404900300"))
-        );
+        checkRow("Student Name", "Чупакабра Редкая");
+        checkRow("Gender", "Other");
+        checkRow("Mobile", "7404900300");
     }
 
     // ---------- Негативные тесты
@@ -64,16 +67,16 @@ public class TestReservePracticeForm {
         executeJavaScript("$('#fixedban').remove();");
 
         // Заполнение обязательных полей
-        $("#firstName").shouldBe(Condition.editable).setValue("Чупакабра");
-        $("#lastName").shouldBe(Condition.editable).setValue("Редкая");
-        $("#genterWrapper [value='Other']").shouldBe(Condition.clickable).click();
-        $("#userNumber").shouldBe(Condition.editable).setValue("7404900300");
+        $("#firstName").setValue("Чупакабра");
+        $("#lastName").setValue("Редкая");
+        $("#genterWrapper [value='Other']").click();
+        $("#userNumber").setValue("7404900300");
 
         // Перезатираем поле
-        $(selector).shouldBe(Condition.editable).setValue(value);
+        $(selector).setValue(value);
 
         // Подтверждение
-        $("button#submit").shouldBe(Condition.clickable).click();
+        $("button#submit").click();
 
         // Проверка невалидного статуса поля
         $("%s:invalid".formatted(selector)).shouldBe(Condition.visible);
