@@ -1,38 +1,35 @@
 package qa.guru.tests;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qa.guru.config.Environment;
 import qa.guru.data.PracticeFormData;
 import qa.guru.helpers.BaseTest;
-import qa.guru.pages.demoqa.PracticeFormPage;
+import qa.guru.helpers.TableUiHelper;
+import qa.guru.pages.PracticeFormPage;
 
-import static com.codeborne.selenide.CollectionCondition.allMatch;
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
 import static qa.guru.helpers.CustomConditions.invalid;
 import static qa.guru.helpers.CustomConditions.valid;
 
 
 public class TestPracticeForm extends BaseTest {
-
-    private void checkRow(String label, String value) {
-        $(".table-responsive").$(byText(label)).parent().shouldHave(text(value));
-    }
+    private final Environment env = Environment.DEMOQA_FORM;
+    private final PracticeFormPage currentPage = new PracticeFormPage();
+    private final SelenideElement tableResult = $(".table-responsive");
 
     // ---------- Позитивные тесты
     @Test
     @DisplayName("PF-CASE-001. Успешное заполнение всех полей формы регистрации")
     void shouldRegisterUserWhenAllFieldsAreValid() {
         // Given
-        PracticeFormPage practiceFormPage = new PracticeFormPage();
+        currentPage.openPage(env);
 
         // When
-        practiceFormPage
-                .openPage()
+        currentPage
                 .setFirstName(PracticeFormData.SuccessRegisterWithAllFields.FIRST_NAME)
                 .setLastName(PracticeFormData.SuccessRegisterWithAllFields.LAST_NAME)
                 .setUserEmail(PracticeFormData.SuccessRegisterWithAllFields.USER_EMAIL)
@@ -52,46 +49,46 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         String columnName = "Values";
-        practiceFormPage.getCellFromTableResult("Student Name", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Student Name", columnName)
                 .shouldHave(text("%s %s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.FIRST_NAME,
                         PracticeFormData.SuccessRegisterWithAllFields.LAST_NAME))
                 );
-        practiceFormPage.getCellFromTableResult("Student Email", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Student Email", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.USER_EMAIL))
                 );
-        practiceFormPage.getCellFromTableResult("Gender", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Gender", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.USER_GENDER))
                 );
-        practiceFormPage.getCellFromTableResult("Mobile", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Mobile", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.USER_NUMBER))
                 );
-        practiceFormPage.getCellFromTableResult("Date of Birth", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Date of Birth", columnName)
                 .shouldHave(text("%s %s,%s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.DAY_OF_BIRTH,
                         PracticeFormData.SuccessRegisterWithAllFields.MONTH_OF_BIRTH,
                         PracticeFormData.SuccessRegisterWithAllFields.YEAR_OF_BIRTH))
                 );
-        practiceFormPage.getCellFromTableResult("Subjects", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Subjects", columnName)
                 .shouldHave(text("%s".formatted(
                         String.join(", ", PracticeFormData.SuccessRegisterWithAllFields.SUBJECTS)))
                 );
-        practiceFormPage.getCellFromTableResult("Hobbies", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Hobbies", columnName)
                 .shouldHave(text("%s".formatted(
                         String.join(", ", PracticeFormData.SuccessRegisterWithAllFields.HOBBIES)))
                 );
-        practiceFormPage.getCellFromTableResult("Picture", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Picture", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.PICTURE))
                 );
-        practiceFormPage.getCellFromTableResult("Address", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Address", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.ADDRESS))
                 );
-        practiceFormPage.getCellFromTableResult("State and City", columnName)
+        TableUiHelper.getCellByNames(tableResult, "State and City", columnName)
                 .shouldHave(text("%s %s".formatted(
                         PracticeFormData.SuccessRegisterWithAllFields.STATE,
                         PracticeFormData.SuccessRegisterWithAllFields.CITY))
@@ -102,11 +99,10 @@ public class TestPracticeForm extends BaseTest {
     @DisplayName("PF-CASE-002. Успешное заполнение обязательных полей формы регистрации")
     void shouldRegisterUserWhenARequiredFieldsAreValid() {
         // Given
-        PracticeFormPage practiceFormPage = new PracticeFormPage();
+        currentPage.openPage(env);
 
         // When
-        practiceFormPage
-                .openPage()
+        currentPage
                 .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
                 .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
                 .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
@@ -115,16 +111,16 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         String columnName = "Values";
-        practiceFormPage.getCellFromTableResult("Student Name", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Student Name", columnName)
                 .shouldHave(text("%s %s".formatted(
                         PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME,
                         PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME))
                 );
-        practiceFormPage.getCellFromTableResult("Gender", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Gender", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER))
                 );
-        practiceFormPage.getCellFromTableResult("Mobile", columnName)
+        TableUiHelper.getCellByNames(tableResult, "Mobile", columnName)
                 .shouldHave(text("%s".formatted(
                         PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER))
                 );
@@ -135,11 +131,10 @@ public class TestPracticeForm extends BaseTest {
     @DisplayName("PF-CASE-003. Ошибка - остуствует обязательное поле [Фамилия]")
     void shouldNotRegisterWhenLastNameIsEmpty() {
         // Given
-        PracticeFormPage practiceFormPage = new PracticeFormPage();
+        currentPage.openPage(env);
 
         // When
-        practiceFormPage
-                .openPage()
+        currentPage
                 .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
                 .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
                 .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
@@ -147,32 +142,31 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        practiceFormPage.getLastName().shouldBe(invalid);
+        currentPage.getLastName().shouldBe(invalid);
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        practiceFormPage.getFirstName().shouldBe(valid);
-        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
-        practiceFormPage.getUserEmail().shouldBe(valid);
-        practiceFormPage.getUserNumber().shouldBe(valid);
-        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
-        practiceFormPage.getSubjectsInput().shouldBe(valid);
-        practiceFormPage.getHobbiesInput().forEach(el -> el.shouldBe(valid));
-        practiceFormPage.getUploadPicture().shouldBe(valid);
-        practiceFormPage.getUserAddress().shouldBe(valid);
-        practiceFormPage.getUserState().shouldBe(valid);
-        practiceFormPage.getUserCity().shouldBe(valid);
+        currentPage.getFirstName().shouldBe(valid);
+        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUserEmail().shouldBe(valid);
+        currentPage.getUserNumber().shouldBe(valid);
+        currentPage.getDateOfBirthCalendar().shouldBe(valid);
+        currentPage.getSubjectsInput().shouldBe(valid);
+        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUploadPicture().shouldBe(valid);
+        currentPage.getUserAddress().shouldBe(valid);
+        currentPage.getUserState().shouldBe(valid);
+        currentPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
+        currentPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-004. Ошибка - остуствует обязательное поле [Пол]")
     void shouldNotRegisterWhenGenderIsEmpty() {
         // Given
-        PracticeFormPage practiceFormPage = new PracticeFormPage();
+        currentPage.openPage(env);
 
         // When
-        practiceFormPage
-                .openPage()
+        currentPage
                 .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
                 .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
                 .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
@@ -180,32 +174,31 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(invalid));
+        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(invalid));
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        practiceFormPage.getFirstName().shouldBe(valid);
-        practiceFormPage.getLastName().shouldBe(valid);
-        practiceFormPage.getUserEmail().shouldBe(valid);
-        practiceFormPage.getUserNumber().shouldBe(valid);
-        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
-        practiceFormPage.getSubjectsInput().shouldBe(valid);
-        practiceFormPage.getHobbiesInput().forEach(el -> el.shouldBe(valid));
-        practiceFormPage.getUploadPicture().shouldBe(valid);
-        practiceFormPage.getUserAddress().shouldBe(valid);
-        practiceFormPage.getUserState().shouldBe(valid);
-        practiceFormPage.getUserCity().shouldBe(valid);
+        currentPage.getFirstName().shouldBe(valid);
+        currentPage.getLastName().shouldBe(valid);
+        currentPage.getUserEmail().shouldBe(valid);
+        currentPage.getUserNumber().shouldBe(valid);
+        currentPage.getDateOfBirthCalendar().shouldBe(valid);
+        currentPage.getSubjectsInput().shouldBe(valid);
+        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUploadPicture().shouldBe(valid);
+        currentPage.getUserAddress().shouldBe(valid);
+        currentPage.getUserState().shouldBe(valid);
+        currentPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
+        currentPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-005. Ошибка - остуствует обязательное поле [Мобильный]")
     void shouldNotRegisterWhenMobileIsEmpty() {
         // Given
-        PracticeFormPage practiceFormPage = new PracticeFormPage();
+        currentPage.openPage(env);
 
         // When
-        practiceFormPage
-                .openPage()
+        currentPage
                 .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
                 .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
                 .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
@@ -213,100 +206,87 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        practiceFormPage.getUserNumber().shouldBe(invalid);
+        currentPage.getUserNumber().shouldBe(invalid);
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        practiceFormPage.getFirstName().shouldBe(valid);
-        practiceFormPage.getLastName().shouldBe(valid);
-        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
-        practiceFormPage.getUserEmail().shouldBe(valid);
-        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
-        practiceFormPage.getSubjectsInput().shouldBe(valid);
-        practiceFormPage.getHobbiesInput().forEach(el -> el.shouldBe(valid));
-        practiceFormPage.getUploadPicture().shouldBe(valid);
-        practiceFormPage.getUserAddress().shouldBe(valid);
-        practiceFormPage.getUserState().shouldBe(valid);
-        practiceFormPage.getUserCity().shouldBe(valid);
+        currentPage.getFirstName().shouldBe(valid);
+        currentPage.getLastName().shouldBe(valid);
+        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUserEmail().shouldBe(valid);
+        currentPage.getDateOfBirthCalendar().shouldBe(valid);
+        currentPage.getSubjectsInput().shouldBe(valid);
+        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUploadPicture().shouldBe(valid);
+        currentPage.getUserAddress().shouldBe(valid);
+        currentPage.getUserState().shouldBe(valid);
+        currentPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
+        currentPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-006. Ошибка - некорректная почта")
-    // TODO!!! Здесь остановился
     void shouldNotRegisterWhenIncorrectEmail() {
-        // Открываем форму на весь экран
-        open("/automation-practice-form");
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        // Given
+        currentPage.openPage(env);
 
-        // Заполнение полей - обязательные + некорректная почта
-        $("input#firstName").setValue("Лариса");
-        $("input#lastName").setValue("Крофтова");
-        $("input.form-check-input[value='Female']").click();
-        $("#userNumber").setValue("7404500300");
-        $("#userEmail").setValue("@please_work_finally@test.ru");
+        // When
+        currentPage
+                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
+                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
+                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
+                .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
+                .setUserEmail(PracticeFormData.ErrorRegisterWithIncorrectEmail.USER_EMAIL)
+                .submit();
 
-        // Подтверждение
-        $("#submit").click();
-
-        // Проверка невалидного поля почты
-        $("#userEmail:invalid").shouldBe(Condition.visible);
-        // Остальные поля валидны
-        $("#firstName:valid").shouldBe(Condition.visible);
-        $("#lastName:valid").shouldBe(Condition.visible);
-        $(".form-check-input[value='Male']:valid").shouldBe(Condition.visible);
-        $(".form-check-input[value='Female']:valid").shouldBe(Condition.visible);
-        $(".form-check-input[value='Other']:valid").shouldBe(Condition.visible);
-        $("#userNumber:valid").shouldBe(Condition.visible);
-        $("#dateOfBirthInput:valid").shouldBe(Condition.visible);
-        $("#subjectsInput:valid").shouldBe(Condition.visible);
-        $("#hobbies-checkbox-1:valid").shouldBe(Condition.visible);
-        $("#hobbies-checkbox-2:valid").shouldBe(Condition.visible);
-        $("#hobbies-checkbox-3:valid").shouldBe(Condition.visible);
-        $("#uploadPicture:valid").shouldBe(Condition.visible);
-        $("#currentAddress:valid").shouldBe(Condition.visible);
-        $("#state input:valid").shouldBe(Condition.visible);
-        $("#city input").shouldBe(Condition.disabled);
-
+        // Then
+        // Проверка невалидных полей (красный восклицательный знак)
+        currentPage.getUserEmail().shouldBe(invalid);
+        // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
+        currentPage.getFirstName().shouldBe(valid);
+        currentPage.getLastName().shouldBe(valid);
+        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUserNumber().shouldBe(valid);
+        currentPage.getDateOfBirthCalendar().shouldBe(valid);
+        currentPage.getSubjectsInput().shouldBe(valid);
+        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUploadPicture().shouldBe(valid);
+        currentPage.getUserAddress().shouldBe(valid);
+        currentPage.getUserState().shouldBe(valid);
+        currentPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        $(".table-responsive").shouldBe(Condition.hidden);
+        currentPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-007. Ошибка - некорректный номер (9 цифр)")
     void shouldNotRegisterWhenIncorrectMobile() {
-        // Открываем форму на весь экран
-        open("/automation-practice-form");
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        // Given
+        currentPage.openPage(env);
 
-        // Заполнение полей - обязательные + некорректная почта
-        $("input#firstName").setValue("Лариса");
-        $("input#lastName").setValue("Крофтова");
-        $("input.form-check-input[value='Female']").click();
-        $("#userNumber").setValue("740450030");
+        // When
+        currentPage
+                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
+                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
+                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
+                .setUserNumber(PracticeFormData.ErrorRegisterWithIncorrectNumber.USER_NUMBER)
+                .submit();
 
-        // Подтверждение
-        $("#submit").click();
-
-        // Проверка невалидного поля почты
-        $("#userNumber:invalid").shouldBe(Condition.visible);
-        // Остальные поля валидны
-        $("#firstName:valid").shouldBe(Condition.visible);
-        $("#lastName:valid").shouldBe(Condition.visible);
-        $("#userEmail:valid").shouldBe(Condition.visible);
-        $(".form-check-input[value='Male']:valid").shouldBe(Condition.visible);
-        $(".form-check-input[value='Female']:valid").shouldBe(Condition.visible);
-        $(".form-check-input[value='Other']:valid").shouldBe(Condition.visible);
-        $("#dateOfBirthInput:valid").shouldBe(Condition.visible);
-        $("#subjectsInput:valid").shouldBe(Condition.visible);
-        $("#hobbies-checkbox-1:valid").shouldBe(Condition.visible);
-        $("#hobbies-checkbox-2:valid").shouldBe(Condition.visible);
-        $("#hobbies-checkbox-3:valid").shouldBe(Condition.visible);
-        $("#uploadPicture:valid").shouldBe(Condition.visible);
-        $("#currentAddress:valid").shouldBe(Condition.visible);
-        $("#state input:valid").shouldBe(Condition.visible);
-        $("#city input").shouldBe(Condition.disabled);
-
+        // Then
+        // Проверка невалидных полей (красный восклицательный знак)
+        currentPage.getUserNumber().shouldBe(invalid);
+        // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
+        currentPage.getFirstName().shouldBe(valid);
+        currentPage.getLastName().shouldBe(valid);
+        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUserEmail().shouldBe(valid);
+        currentPage.getDateOfBirthCalendar().shouldBe(valid);
+        currentPage.getSubjectsInput().shouldBe(valid);
+        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        currentPage.getUploadPicture().shouldBe(valid);
+        currentPage.getUserAddress().shouldBe(valid);
+        currentPage.getUserState().shouldBe(valid);
+        currentPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        $(".table-responsive").shouldBe(Condition.hidden);
+        currentPage.getTableResult().shouldBe(Condition.hidden);
     }
 }

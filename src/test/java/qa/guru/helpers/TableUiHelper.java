@@ -40,4 +40,26 @@ public class TableUiHelper {
         // Возвращаем точную ячейку из нужной строки
         return table.$$("tbody tr").get(idxRow).$$("td").get(idxColumn);
     }
+
+    public static SelenideElement getRowByName(SelenideElement table, String rowName) {
+        List<String> rowsText = table.$$("tbody tr > td:first-child").texts();
+
+        int idxRow = -1;
+
+        // Ищем индекс строки, очищая фронтовую грязь прямо в цикле
+        for (int i = 0; i < rowsText.size(); i++) {
+            String cleanFrontRow = TextUiCleaner.clean(rowsText.get(i));
+
+            if (cleanFrontRow.equals(rowName)) {
+                idxRow = i;
+                break;
+            }
+        }
+
+        // Если что-то не нашли — кидаем понятную ошибку
+        if (idxRow == -1) throw new AssertionError("Строка '" + rowName + "' не найдена после очистки фронта!");
+
+        // Возвращаем всю строку из таблицы
+        return table.$$("tbody tr").get(idxRow);
+    }
 }

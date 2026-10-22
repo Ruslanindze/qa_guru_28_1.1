@@ -31,4 +31,12 @@ public final class PracticeFormData {
         public final static String USER_GENDER = "Female";
         public final static String USER_NUMBER = "7404500300";
     }
+
+    public static final class ErrorRegisterWithIncorrectEmail {
+        public final static String USER_EMAIL = "@please_work_finally@test.ru";
+    }
+
+    public static final class ErrorRegisterWithIncorrectNumber {
+        public final static String USER_NUMBER = "740450030";
+    }
 }
