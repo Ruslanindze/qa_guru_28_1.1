@@ -1,4 +1,4 @@
-package qa.guru;
+package qa.guru.tests;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
@@ -20,7 +20,7 @@ import static com.codeborne.selenide.Selenide.*;
 public class TestReservePracticeForm {
 
     @BeforeAll
-    static void setup() {
+    static void localSetup() {
         Configuration.baseUrl = "https://qa-guru.github.io";
     }
 
