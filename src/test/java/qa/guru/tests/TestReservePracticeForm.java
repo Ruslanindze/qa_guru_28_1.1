@@ -8,25 +8,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import qa.guru.components.ResultTableComponent;
 import qa.guru.config.Environment;
-import qa.guru.data.ReservePracticeFormData;
+import qa.guru.data.TestData;
 import qa.guru.helpers.BaseTest;
-import qa.guru.helpers.TableUiHelper;
-import qa.guru.pages.PracticeFormPage;
+import qa.guru.pages.ReservePracticeForm;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static qa.guru.helpers.CustomConditions.invalid;
 
 
 public class TestReservePracticeForm extends BaseTest {
-    private final Environment env = Environment.QA_GURU_FORM;
-    private final PracticeFormPage currentPage = new PracticeFormPage();
-    private final SelenideElement tableResult = $("#resultModal");
+    private final Environment env = Environment.QA_GURU;
+    private final ReservePracticeForm currentPage = new ReservePracticeForm();
 
     // ---------- Позитивные тесты
     @Test
@@ -39,26 +36,19 @@ public class TestReservePracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(ReservePracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(ReservePracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserGender(ReservePracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
-                .setUserNumber(ReservePracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
+                .setFirstName(TestData.FIRST_NAME_3)
+                .setLastName(TestData.LAST_NAME_3)
+                .setUserGender(TestData.USER_GENDER_3)
+                .setUserNumber(TestData.USER_NUMBER_3)
                 .submit();
 
         // Then
-        TableUiHelper.getRowByName(tableResult, "Student Name")
-                .shouldHave(text("%s %s".formatted(
-                        ReservePracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME,
-                        ReservePracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME))
-                );
-        TableUiHelper.getRowByName(tableResult, "Gender")
-                .shouldHave(text("%s".formatted(
-                        ReservePracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER))
-                );
-        TableUiHelper.getRowByName(tableResult, "Mobile")
-                .shouldHave(text("%s".formatted(
-                        ReservePracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER))
-                );
+        ResultTableComponent resultTable = currentPage.getResultTableComponent();
+        String expectedFullName = TestData.FIRST_NAME_3 + " " + TestData.LAST_NAME_3;
+
+        resultTable.shouldHaveRowContainingText("Student Name", expectedFullName);
+        resultTable.shouldHaveRowContainingText("Gender", TestData.USER_GENDER_3);
+        resultTable.shouldHaveRowContainingText("Mobile", TestData.USER_NUMBER_3);
     }
 
     // ---------- Негативные тесты
@@ -66,7 +56,7 @@ public class TestReservePracticeForm extends BaseTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("negativeRegistrationDataProvider")
     void shouldNotRegisterWhenReqFieldIncorrect(String scenarioName,
-                                                Function<PracticeFormPage, SelenideElement> fieldProvider,
+                                                Function<ReservePracticeForm, SelenideElement> fieldProvider,
                                                 String value) {
         // Given
         currentPage.openPage(env);
@@ -76,11 +66,11 @@ public class TestReservePracticeForm extends BaseTest {
         // When
         // Заполнение обязательных полей
         currentPage
-                .setFirstName(ReservePracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(ReservePracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserGender(ReservePracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
-                .setUserNumber(ReservePracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER);
-        // Перезатираем поле
+                .setFirstName(TestData.FIRST_NAME_3)
+                .setLastName(TestData.LAST_NAME_3)
+                .setUserGender(TestData.USER_GENDER_3)
+                .setUserNumber(TestData.USER_NUMBER_3);
+        // Перезатираем поле и подтверждаем
         SelenideElement field = fieldProvider.apply(currentPage);
         field
                 .setValue(value)
@@ -96,15 +86,15 @@ public class TestReservePracticeForm extends BaseTest {
                 // Аргументы: Имя сценария | Поле (селектор) | Значение
                 Arguments.of(
                         "Пустое имя",
-                        (Function<PracticeFormPage, SelenideElement>) PracticeFormPage::getFirstName,
+                        (Function<ReservePracticeForm, SelenideElement>) ReservePracticeForm::getFirstName,
                         ""),
                 Arguments.of(
                         "Пустая фамилия",
-                        (Function<PracticeFormPage, SelenideElement>) PracticeFormPage::getLastName,
+                        (Function<ReservePracticeForm, SelenideElement>) ReservePracticeForm::getLastName,
                         ""),
                 Arguments.of(
                         "Некорректный телефон (мало цифр)",
-                        (Function<PracticeFormPage, SelenideElement>) PracticeFormPage::getUserNumber,
+                        (Function<ReservePracticeForm, SelenideElement>) ReservePracticeForm::getUserNumber,
                         "123")
         );
     }

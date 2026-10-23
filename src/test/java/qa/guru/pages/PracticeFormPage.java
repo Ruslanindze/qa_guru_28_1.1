@@ -3,6 +3,7 @@ package qa.guru.pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
+import qa.guru.components.ResultTableComponent;
 import qa.guru.config.Environment;
 
 import java.util.List;
@@ -14,6 +15,8 @@ import static com.codeborne.selenide.Selenide.*;
 
 @Getter
 public class PracticeFormPage {
+    private final String PAGE_URL = "/automation-practice-form";
+
     private final SelenideElement firstName = $("#firstName");
     private final SelenideElement lastName = $("#lastName");
     private final SelenideElement userEmail = $("#userEmail");
@@ -34,10 +37,10 @@ public class PracticeFormPage {
     private final SelenideElement uploadPicture = $("#uploadPicture");
 
     private final SelenideElement buttonSubmit = $("button#submit");
-    private final SelenideElement tableResult = $(".table-responsive");
+    private final ResultTableComponent resultTableComponent = new ResultTableComponent(".table-responsive");
 
     public PracticeFormPage openPage(Environment env) {
-        open(env.getFullUrl());
+        open(env.getBaseUrl() + PAGE_URL);
         return this;
     }
 
@@ -113,5 +116,9 @@ public class PracticeFormPage {
     public PracticeFormPage submit() {
         this.buttonSubmit.click();
         return this;
+    }
+
+    public SelenideElement getTableResult() {
+        return resultTableComponent.getTableResult();
     }
 }
