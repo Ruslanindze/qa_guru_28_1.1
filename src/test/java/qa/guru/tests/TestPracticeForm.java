@@ -1,25 +1,21 @@
 package qa.guru.tests;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import qa.guru.components.ResultTableComponent;
 import qa.guru.config.Environment;
-import qa.guru.data.PracticeFormData;
+import qa.guru.data.TestData;
 import qa.guru.helpers.BaseTest;
-import qa.guru.helpers.TableUiHelper;
 import qa.guru.pages.PracticeFormPage;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
 import static qa.guru.helpers.CustomConditions.invalid;
 import static qa.guru.helpers.CustomConditions.valid;
 
 
 public class TestPracticeForm extends BaseTest {
-    private final Environment env = Environment.DEMOQA_FORM;
+    private final Environment env = Environment.DEMOQA;
     private final PracticeFormPage currentPage = new PracticeFormPage();
-    private final SelenideElement tableResult = $(".table-responsive");
 
     // ---------- Позитивные тесты
     @Test
@@ -30,69 +26,40 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithAllFields.FIRST_NAME)
-                .setLastName(PracticeFormData.SuccessRegisterWithAllFields.LAST_NAME)
-                .setUserEmail(PracticeFormData.SuccessRegisterWithAllFields.USER_EMAIL)
-                .setUserGender(PracticeFormData.SuccessRegisterWithAllFields.USER_GENDER)
-                .setUserNumber(PracticeFormData.SuccessRegisterWithAllFields.USER_NUMBER)
+                .setFirstName(TestData.FIRST_NAME)
+                .setLastName(TestData.LAST_NAME)
+                .setUserEmail(TestData.USER_EMAIL)
+                .setUserGender(TestData.USER_GENDER)
+                .setUserNumber(TestData.USER_NUMBER)
                 .setUserDateOfBirth(
-                        PracticeFormData.SuccessRegisterWithAllFields.YEAR_OF_BIRTH,
-                        PracticeFormData.SuccessRegisterWithAllFields.MONTH_OF_BIRTH,
-                        PracticeFormData.SuccessRegisterWithAllFields.DAY_OF_BIRTH)
-                .setSubjects(PracticeFormData.SuccessRegisterWithAllFields.SUBJECTS)
-                .setHobbies(PracticeFormData.SuccessRegisterWithAllFields.HOBBIES)
-                .uploadPicture(PracticeFormData.SuccessRegisterWithAllFields.PICTURE)
-                .setUserAddress(PracticeFormData.SuccessRegisterWithAllFields.ADDRESS)
-                .setUserState(PracticeFormData.SuccessRegisterWithAllFields.STATE)
-                .setUserCity(PracticeFormData.SuccessRegisterWithAllFields.CITY)
+                        TestData.YEAR_OF_BIRTH,
+                        TestData.MONTH_OF_BIRTH,
+                        TestData.DAY_OF_BIRTH)
+                .setSubjects(TestData.SUBJECTS)
+                .setHobbies(TestData.HOBBIES)
+                .uploadPicture(TestData.PICTURE)
+                .setUserAddress(TestData.ADDRESS)
+                .setUserState(TestData.STATE)
+                .setUserCity(TestData.CITY)
                 .submit();
 
         // Then
         String columnName = "Values";
-        TableUiHelper.getCellByNames(tableResult, "Student Name", columnName)
-                .shouldHave(text("%s %s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.FIRST_NAME,
-                        PracticeFormData.SuccessRegisterWithAllFields.LAST_NAME))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Student Email", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.USER_EMAIL))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Gender", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.USER_GENDER))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Mobile", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.USER_NUMBER))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Date of Birth", columnName)
-                .shouldHave(text("%s %s,%s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.DAY_OF_BIRTH,
-                        PracticeFormData.SuccessRegisterWithAllFields.MONTH_OF_BIRTH,
-                        PracticeFormData.SuccessRegisterWithAllFields.YEAR_OF_BIRTH))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Subjects", columnName)
-                .shouldHave(text("%s".formatted(
-                        String.join(", ", PracticeFormData.SuccessRegisterWithAllFields.SUBJECTS)))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Hobbies", columnName)
-                .shouldHave(text("%s".formatted(
-                        String.join(", ", PracticeFormData.SuccessRegisterWithAllFields.HOBBIES)))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Picture", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.PICTURE))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Address", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.ADDRESS))
-                );
-        TableUiHelper.getCellByNames(tableResult, "State and City", columnName)
-                .shouldHave(text("%s %s".formatted(
-                        PracticeFormData.SuccessRegisterWithAllFields.STATE,
-                        PracticeFormData.SuccessRegisterWithAllFields.CITY))
-                );
+        ResultTableComponent resultTable = currentPage.getResultTableComponent();
+        String expectedFullName = TestData.FIRST_NAME + " " + TestData.LAST_NAME;
+        String expectedDateOfBirth = TestData.DAY_OF_BIRTH + " " + TestData.MONTH_OF_BIRTH + "," + TestData.YEAR_OF_BIRTH;
+        String expectedStateAndCity = TestData.STATE + " " + TestData.CITY;
+
+        resultTable.shouldHaveCellText("Student Name", columnName, expectedFullName);
+        resultTable.shouldHaveCellText("Student Email", columnName, TestData.USER_EMAIL);
+        resultTable.shouldHaveCellText("Gender", columnName, TestData.USER_GENDER);
+        resultTable.shouldHaveCellText("Mobile", columnName, TestData.USER_NUMBER);
+        resultTable.shouldHaveCellText("Date of Birth", columnName, expectedDateOfBirth);
+        resultTable.shouldHaveCellText("Subjects", columnName, String.join(", ", TestData.SUBJECTS));
+        resultTable.shouldHaveCellText("Hobbies", columnName, String.join(", ", TestData.HOBBIES));
+        resultTable.shouldHaveCellText("Picture", columnName, TestData.PICTURE);
+        resultTable.shouldHaveCellText("Address", columnName, TestData.ADDRESS);
+        resultTable.shouldHaveCellText("State and City", columnName, expectedStateAndCity);
     }
 
     @Test
@@ -103,27 +70,20 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
-                .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
+                .setFirstName(TestData.FIRST_NAME_2)
+                .setLastName(TestData.LAST_NAME_2)
+                .setUserGender(TestData.USER_GENDER_2)
+                .setUserNumber(TestData.USER_NUMBER_2)
                 .submit();
 
         // Then
         String columnName = "Values";
-        TableUiHelper.getCellByNames(tableResult, "Student Name", columnName)
-                .shouldHave(text("%s %s".formatted(
-                        PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME,
-                        PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Gender", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER))
-                );
-        TableUiHelper.getCellByNames(tableResult, "Mobile", columnName)
-                .shouldHave(text("%s".formatted(
-                        PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER))
-                );
+        ResultTableComponent resultTable = currentPage.getResultTableComponent();
+        String expectedFullName = TestData.FIRST_NAME_2 + " " + TestData.LAST_NAME_2;
+
+        resultTable.shouldHaveCellText("Student Name", columnName, expectedFullName);
+        resultTable.shouldHaveCellText("Gender", columnName, TestData.USER_GENDER_2);
+        resultTable.shouldHaveCellText("Mobile", columnName, TestData.USER_NUMBER_2);
     }
 
     // ---------- Негативные тесты
@@ -135,9 +95,9 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
-                .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
+                .setFirstName(TestData.FIRST_NAME_2)
+                .setUserGender(TestData.USER_GENDER_2)
+                .setUserNumber(TestData.USER_NUMBER_2)
                 .submit();
 
         // Then
@@ -167,9 +127,9 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
+                .setFirstName(TestData.FIRST_NAME_2)
+                .setLastName(TestData.LAST_NAME_2)
+                .setUserNumber(TestData.USER_NUMBER_2)
                 .submit();
 
         // Then
@@ -199,9 +159,9 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
+                .setFirstName(TestData.FIRST_NAME_2)
+                .setLastName(TestData.LAST_NAME_2)
+                .setUserGender(TestData.USER_GENDER_2)
                 .submit();
 
         // Then
@@ -231,11 +191,11 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
-                .setUserNumber(PracticeFormData.SuccessRegisterWithRequiredFields.USER_NUMBER)
-                .setUserEmail(PracticeFormData.ErrorRegisterWithIncorrectEmail.USER_EMAIL)
+                .setFirstName(TestData.FIRST_NAME_2)
+                .setLastName(TestData.LAST_NAME_2)
+                .setUserGender(TestData.USER_GENDER_2)
+                .setUserNumber(TestData.USER_NUMBER_2)
+                .setUserEmail(TestData.USER_EMAIL_BAD)
                 .submit();
 
         // Then
@@ -265,10 +225,10 @@ public class TestPracticeForm extends BaseTest {
 
         // When
         currentPage
-                .setFirstName(PracticeFormData.SuccessRegisterWithRequiredFields.FIRST_NAME)
-                .setLastName(PracticeFormData.SuccessRegisterWithRequiredFields.LAST_NAME)
-                .setUserGender(PracticeFormData.SuccessRegisterWithRequiredFields.USER_GENDER)
-                .setUserNumber(PracticeFormData.ErrorRegisterWithIncorrectNumber.USER_NUMBER)
+                .setFirstName(TestData.FIRST_NAME_2)
+                .setLastName(TestData.LAST_NAME_2)
+                .setUserGender(TestData.USER_GENDER_2)
+                .setUserNumber(TestData.USER_NUMBER_BAD)
                 .submit();
 
         // Then
