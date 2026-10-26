@@ -3,7 +3,7 @@ package qa.guru.tests;
 import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qa.guru.components.ResultTableComponent;
+import qa.guru.pages.components.ResultTableComponent;
 import qa.guru.config.Environment;
 import qa.guru.data.TestData;
 import qa.guru.helpers.BaseTest;
@@ -13,19 +13,19 @@ import static qa.guru.helpers.CustomConditions.invalid;
 import static qa.guru.helpers.CustomConditions.valid;
 
 
-public class TestPracticeForm extends BaseTest {
+public class PracticeFormTest extends BaseTest {
     private final Environment env = Environment.DEMOQA;
-    private final PracticeFormPage currentPage = new PracticeFormPage();
+    private final PracticeFormPage practiceFormPage = new PracticeFormPage();
 
     // ---------- Позитивные тесты
     @Test
     @DisplayName("PF-CASE-001. Успешное заполнение всех полей формы регистрации")
     void shouldRegisterUserWhenAllFieldsAreValid() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME)
                 .setLastName(TestData.LAST_NAME)
                 .setUserEmail(TestData.USER_EMAIL)
@@ -45,7 +45,7 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         String columnName = "Values";
-        ResultTableComponent resultTable = currentPage.getResultTableComponent();
+        ResultTableComponent resultTable = practiceFormPage.getResultTableComponent();
         String expectedFullName = TestData.FIRST_NAME + " " + TestData.LAST_NAME;
         String expectedDateOfBirth = TestData.DAY_OF_BIRTH + " " + TestData.MONTH_OF_BIRTH + "," + TestData.YEAR_OF_BIRTH;
         String expectedStateAndCity = TestData.STATE + " " + TestData.CITY;
@@ -66,10 +66,10 @@ public class TestPracticeForm extends BaseTest {
     @DisplayName("PF-CASE-002. Успешное заполнение обязательных полей формы регистрации")
     void shouldRegisterUserWhenARequiredFieldsAreValid() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME_2)
                 .setLastName(TestData.LAST_NAME_2)
                 .setUserGender(TestData.USER_GENDER_2)
@@ -78,7 +78,7 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         String columnName = "Values";
-        ResultTableComponent resultTable = currentPage.getResultTableComponent();
+        ResultTableComponent resultTable = practiceFormPage.getResultTableComponent();
         String expectedFullName = TestData.FIRST_NAME_2 + " " + TestData.LAST_NAME_2;
 
         resultTable.shouldHaveCellText("Student Name", columnName, expectedFullName);
@@ -91,10 +91,10 @@ public class TestPracticeForm extends BaseTest {
     @DisplayName("PF-CASE-003. Ошибка - остуствует обязательное поле [Фамилия]")
     void shouldNotRegisterWhenLastNameIsEmpty() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME_2)
                 .setUserGender(TestData.USER_GENDER_2)
                 .setUserNumber(TestData.USER_NUMBER_2)
@@ -102,31 +102,31 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        currentPage.getLastName().shouldBe(invalid);
+        practiceFormPage.getLastName().shouldBe(invalid);
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        currentPage.getFirstName().shouldBe(valid);
-        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUserEmail().shouldBe(valid);
-        currentPage.getUserNumber().shouldBe(valid);
-        currentPage.getDateOfBirthCalendar().shouldBe(valid);
-        currentPage.getSubjectsInput().shouldBe(valid);
-        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUploadPicture().shouldBe(valid);
-        currentPage.getUserAddress().shouldBe(valid);
-        currentPage.getUserState().shouldBe(valid);
-        currentPage.getUserCity().shouldBe(valid);
+        practiceFormPage.getFirstName().shouldBe(valid);
+        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUserEmail().shouldBe(valid);
+        practiceFormPage.getUserNumber().shouldBe(valid);
+        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
+        practiceFormPage.getSubjectsInput().shouldBe(valid);
+        practiceFormPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUploadPicture().shouldBe(valid);
+        practiceFormPage.getUserAddress().shouldBe(valid);
+        practiceFormPage.getUserState().shouldBe(valid);
+        practiceFormPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        currentPage.getTableResult().shouldBe(Condition.hidden);
+        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-004. Ошибка - остуствует обязательное поле [Пол]")
     void shouldNotRegisterWhenGenderIsEmpty() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME_2)
                 .setLastName(TestData.LAST_NAME_2)
                 .setUserNumber(TestData.USER_NUMBER_2)
@@ -134,31 +134,31 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(invalid));
+        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(invalid));
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        currentPage.getFirstName().shouldBe(valid);
-        currentPage.getLastName().shouldBe(valid);
-        currentPage.getUserEmail().shouldBe(valid);
-        currentPage.getUserNumber().shouldBe(valid);
-        currentPage.getDateOfBirthCalendar().shouldBe(valid);
-        currentPage.getSubjectsInput().shouldBe(valid);
-        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUploadPicture().shouldBe(valid);
-        currentPage.getUserAddress().shouldBe(valid);
-        currentPage.getUserState().shouldBe(valid);
-        currentPage.getUserCity().shouldBe(valid);
+        practiceFormPage.getFirstName().shouldBe(valid);
+        practiceFormPage.getLastName().shouldBe(valid);
+        practiceFormPage.getUserEmail().shouldBe(valid);
+        practiceFormPage.getUserNumber().shouldBe(valid);
+        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
+        practiceFormPage.getSubjectsInput().shouldBe(valid);
+        practiceFormPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUploadPicture().shouldBe(valid);
+        practiceFormPage.getUserAddress().shouldBe(valid);
+        practiceFormPage.getUserState().shouldBe(valid);
+        practiceFormPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        currentPage.getTableResult().shouldBe(Condition.hidden);
+        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-005. Ошибка - остуствует обязательное поле [Мобильный]")
     void shouldNotRegisterWhenMobileIsEmpty() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME_2)
                 .setLastName(TestData.LAST_NAME_2)
                 .setUserGender(TestData.USER_GENDER_2)
@@ -166,31 +166,31 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        currentPage.getUserNumber().shouldBe(invalid);
+        practiceFormPage.getUserNumber().shouldBe(invalid);
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        currentPage.getFirstName().shouldBe(valid);
-        currentPage.getLastName().shouldBe(valid);
-        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUserEmail().shouldBe(valid);
-        currentPage.getDateOfBirthCalendar().shouldBe(valid);
-        currentPage.getSubjectsInput().shouldBe(valid);
-        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUploadPicture().shouldBe(valid);
-        currentPage.getUserAddress().shouldBe(valid);
-        currentPage.getUserState().shouldBe(valid);
-        currentPage.getUserCity().shouldBe(valid);
+        practiceFormPage.getFirstName().shouldBe(valid);
+        practiceFormPage.getLastName().shouldBe(valid);
+        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUserEmail().shouldBe(valid);
+        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
+        practiceFormPage.getSubjectsInput().shouldBe(valid);
+        practiceFormPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUploadPicture().shouldBe(valid);
+        practiceFormPage.getUserAddress().shouldBe(valid);
+        practiceFormPage.getUserState().shouldBe(valid);
+        practiceFormPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        currentPage.getTableResult().shouldBe(Condition.hidden);
+        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-006. Ошибка - некорректная почта")
     void shouldNotRegisterWhenIncorrectEmail() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME_2)
                 .setLastName(TestData.LAST_NAME_2)
                 .setUserGender(TestData.USER_GENDER_2)
@@ -200,31 +200,31 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        currentPage.getUserEmail().shouldBe(invalid);
+        practiceFormPage.getUserEmail().shouldBe(invalid);
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        currentPage.getFirstName().shouldBe(valid);
-        currentPage.getLastName().shouldBe(valid);
-        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUserNumber().shouldBe(valid);
-        currentPage.getDateOfBirthCalendar().shouldBe(valid);
-        currentPage.getSubjectsInput().shouldBe(valid);
-        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUploadPicture().shouldBe(valid);
-        currentPage.getUserAddress().shouldBe(valid);
-        currentPage.getUserState().shouldBe(valid);
-        currentPage.getUserCity().shouldBe(valid);
+        practiceFormPage.getFirstName().shouldBe(valid);
+        practiceFormPage.getLastName().shouldBe(valid);
+        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUserNumber().shouldBe(valid);
+        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
+        practiceFormPage.getSubjectsInput().shouldBe(valid);
+        practiceFormPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUploadPicture().shouldBe(valid);
+        practiceFormPage.getUserAddress().shouldBe(valid);
+        practiceFormPage.getUserState().shouldBe(valid);
+        practiceFormPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        currentPage.getTableResult().shouldBe(Condition.hidden);
+        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     @Test
     @DisplayName("PF-CASE-007. Ошибка - некорректный номер (9 цифр)")
     void shouldNotRegisterWhenIncorrectMobile() {
         // Given
-        currentPage.openPage(env);
+        practiceFormPage.openPage(env);
 
         // When
-        currentPage
+        practiceFormPage
                 .setFirstName(TestData.FIRST_NAME_2)
                 .setLastName(TestData.LAST_NAME_2)
                 .setUserGender(TestData.USER_GENDER_2)
@@ -233,20 +233,20 @@ public class TestPracticeForm extends BaseTest {
 
         // Then
         // Проверка невалидных полей (красный восклицательный знак)
-        currentPage.getUserNumber().shouldBe(invalid);
+        practiceFormPage.getUserNumber().shouldBe(invalid);
         // Проверка валидных полей (зелёная галочка) - заполнение по-умолчанию
-        currentPage.getFirstName().shouldBe(valid);
-        currentPage.getLastName().shouldBe(valid);
-        currentPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUserEmail().shouldBe(valid);
-        currentPage.getDateOfBirthCalendar().shouldBe(valid);
-        currentPage.getSubjectsInput().shouldBe(valid);
-        currentPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
-        currentPage.getUploadPicture().shouldBe(valid);
-        currentPage.getUserAddress().shouldBe(valid);
-        currentPage.getUserState().shouldBe(valid);
-        currentPage.getUserCity().shouldBe(valid);
+        practiceFormPage.getFirstName().shouldBe(valid);
+        practiceFormPage.getLastName().shouldBe(valid);
+        practiceFormPage.getUserGender().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUserEmail().shouldBe(valid);
+        practiceFormPage.getDateOfBirthCalendar().shouldBe(valid);
+        practiceFormPage.getSubjectsInput().shouldBe(valid);
+        practiceFormPage.getHobbiesInput().$$("input").forEach(el -> el.shouldBe(valid));
+        practiceFormPage.getUploadPicture().shouldBe(valid);
+        practiceFormPage.getUserAddress().shouldBe(valid);
+        practiceFormPage.getUserState().shouldBe(valid);
+        practiceFormPage.getUserCity().shouldBe(valid);
         // Проверка, что таблица не появилась
-        currentPage.getTableResult().shouldBe(Condition.hidden);
+        practiceFormPage.getTableResult().shouldBe(Condition.hidden);
     }
 }
