@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import qa.guru.components.ResultTableComponent;
+import qa.guru.pages.components.ResultTableComponent;
 import qa.guru.config.Environment;
 import qa.guru.data.TestData;
 import qa.guru.helpers.BaseTest;
-import qa.guru.pages.ReservePracticeForm;
+import qa.guru.pages.ReservePracticeFormPage;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -21,21 +21,21 @@ import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static qa.guru.helpers.CustomConditions.invalid;
 
 
-public class TestReservePracticeForm extends BaseTest {
+public class ReservePracticeFormTest extends BaseTest {
     private final Environment env = Environment.QA_GURU;
-    private final ReservePracticeForm currentPage = new ReservePracticeForm();
+    private final ReservePracticeFormPage reservePracticeFormPage = new ReservePracticeFormPage();
 
     // ---------- Позитивные тесты
     @Test
     @DisplayName("RPF-CASE-001. Успешное заполнение обязательных полей формы регистрации")
     void shouldRegisterUserWhenARequiredFieldsAreValid() {
         // Given
-        currentPage.openPage(env);
+        reservePracticeFormPage.openPage(env);
         executeJavaScript("$('#fixedban').remove();");
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // When
-        currentPage
+        reservePracticeFormPage
                 .setFirstName(TestData.FIRST_NAME_3)
                 .setLastName(TestData.LAST_NAME_3)
                 .setUserGender(TestData.USER_GENDER_3)
@@ -43,7 +43,7 @@ public class TestReservePracticeForm extends BaseTest {
                 .submit();
 
         // Then
-        ResultTableComponent resultTable = currentPage.getResultTableComponent();
+        ResultTableComponent resultTable = reservePracticeFormPage.getResultTableComponent();
         String expectedFullName = TestData.FIRST_NAME_3 + " " + TestData.LAST_NAME_3;
 
         resultTable.shouldHaveRowContainingText("Student Name", expectedFullName);
@@ -56,29 +56,29 @@ public class TestReservePracticeForm extends BaseTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("negativeRegistrationDataProvider")
     void shouldNotRegisterWhenReqFieldIncorrect(String scenarioName,
-                                                Function<ReservePracticeForm, SelenideElement> fieldProvider,
+                                                Function<ReservePracticeFormPage, SelenideElement> fieldProvider,
                                                 String value) {
         // Given
-        currentPage.openPage(env);
+        reservePracticeFormPage.openPage(env);
         executeJavaScript("$('#fixedban').remove();");
         WebDriverRunner.getWebDriver().manage().window().maximize();
 
         // When
         // Заполнение обязательных полей
-        currentPage
+        reservePracticeFormPage
                 .setFirstName(TestData.FIRST_NAME_3)
                 .setLastName(TestData.LAST_NAME_3)
                 .setUserGender(TestData.USER_GENDER_3)
                 .setUserNumber(TestData.USER_NUMBER_3);
         // Перезатираем поле и подтверждаем
-        SelenideElement field = fieldProvider.apply(currentPage);
+        SelenideElement field = fieldProvider.apply(reservePracticeFormPage);
         field
                 .setValue(value)
                 .submit();
 
         // Then
         field.shouldBe(invalid);
-        currentPage.getTableResult().shouldBe(Condition.hidden);
+        reservePracticeFormPage.getTableResult().shouldBe(Condition.hidden);
     }
 
     static Stream<Arguments> negativeRegistrationDataProvider() {
@@ -86,15 +86,15 @@ public class TestReservePracticeForm extends BaseTest {
                 // Аргументы: Имя сценария | Поле (селектор) | Значение
                 Arguments.of(
                         "Пустое имя",
-                        (Function<ReservePracticeForm, SelenideElement>) ReservePracticeForm::getFirstName,
+                        (Function<ReservePracticeFormPage, SelenideElement>) ReservePracticeFormPage::getFirstName,
                         ""),
                 Arguments.of(
                         "Пустая фамилия",
-                        (Function<ReservePracticeForm, SelenideElement>) ReservePracticeForm::getLastName,
+                        (Function<ReservePracticeFormPage, SelenideElement>) ReservePracticeFormPage::getLastName,
                         ""),
                 Arguments.of(
                         "Некорректный телефон (мало цифр)",
-                        (Function<ReservePracticeForm, SelenideElement>) ReservePracticeForm::getUserNumber,
+                        (Function<ReservePracticeFormPage, SelenideElement>) ReservePracticeFormPage::getUserNumber,
                         "123")
         );
     }

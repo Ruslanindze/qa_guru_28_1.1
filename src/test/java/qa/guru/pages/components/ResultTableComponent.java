@@ -1,4 +1,4 @@
-package qa.guru.components;
+package qa.guru.pages.components;
 
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;

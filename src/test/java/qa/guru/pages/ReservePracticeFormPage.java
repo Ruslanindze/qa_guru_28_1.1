@@ -2,15 +2,15 @@ package qa.guru.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
-import qa.guru.components.ResultTableComponent;
 import qa.guru.config.Environment;
+import qa.guru.pages.components.ResultTableComponent;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 @Getter
-public class ReservePracticeForm {
+public class ReservePracticeFormPage {
     private static final String PAGE_URL = "/one-page-form/automation-practice-form.html";
 
     private final SelenideElement firstName = $("#firstName");
@@ -21,32 +21,32 @@ public class ReservePracticeForm {
     private final SelenideElement buttonSubmit = $("button#submit");
     private final ResultTableComponent resultTableComponent = new ResultTableComponent("#resultModal");
 
-    public ReservePracticeForm openPage(Environment env) {
+    public ReservePracticeFormPage openPage(Environment env) {
         open(env.getBaseUrl() + PAGE_URL);
         return this;
     }
 
-    public ReservePracticeForm setFirstName(String firstName) {
+    public ReservePracticeFormPage setFirstName(String firstName) {
         this.firstName.setValue(firstName);
         return this;
     }
 
-    public ReservePracticeForm setLastName(String lastName) {
+    public ReservePracticeFormPage setLastName(String lastName) {
         this.lastName.setValue(lastName);
         return this;
     }
 
-    public ReservePracticeForm setUserGender(String gender) {
+    public ReservePracticeFormPage setUserGender(String gender) {
         this.userGender.$(byText(gender)).click();
         return this;
     }
 
-    public ReservePracticeForm setUserNumber(String userNumber) {
+    public ReservePracticeFormPage setUserNumber(String userNumber) {
         this.userNumber.setValue(userNumber);
         return this;
     }
 
-    public ReservePracticeForm submit() {
+    public ReservePracticeFormPage submit() {
         this.buttonSubmit.click();
         return this;
     }
