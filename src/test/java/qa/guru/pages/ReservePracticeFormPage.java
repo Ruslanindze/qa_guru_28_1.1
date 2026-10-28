@@ -1,13 +1,15 @@
 package qa.guru.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import qa.guru.config.Environment;
+import qa.guru.data.UserDto;
 import qa.guru.pages.components.ResultTableComponent;
 
 import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 @Getter
 public class ReservePracticeFormPage {
@@ -23,6 +25,9 @@ public class ReservePracticeFormPage {
 
     public ReservePracticeFormPage openPage(Environment env) {
         open(env.getBaseUrl() + PAGE_URL);
+        executeJavaScript("$('#fixedban').remove();");
+        WebDriverRunner.getWebDriver().manage().window().maximize();
+
         return this;
     }
 
@@ -53,5 +58,15 @@ public class ReservePracticeFormPage {
 
     public SelenideElement getTableResult() {
         return resultTableComponent.getTableResult();
+    }
+
+    public ReservePracticeFormPage registerAs(UserDto userDto) {
+        // Несвязные блоки
+        if (StringUtils.isNotBlank(userDto.getFirstName())) setFirstName(userDto.getFirstName());
+        if (StringUtils.isNotBlank(userDto.getLastName())) setLastName(userDto.getLastName());
+        if (StringUtils.isNotBlank(userDto.getGender())) setUserGender(userDto.getGender());
+        if (StringUtils.isNotBlank(userDto.getPhoneNumber())) setUserNumber(userDto.getPhoneNumber());
+
+        return this;
     }
 }

@@ -2,22 +2,21 @@ package qa.guru.tests;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import qa.guru.pages.components.ResultTableComponent;
 import qa.guru.config.Environment;
 import qa.guru.data.TestData;
+import qa.guru.data.UserDto;
 import qa.guru.helpers.BaseTest;
 import qa.guru.pages.ReservePracticeFormPage;
+import qa.guru.pages.components.ResultTableComponent;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static qa.guru.helpers.CustomConditions.invalid;
 
 
@@ -30,25 +29,19 @@ public class ReservePracticeFormTest extends BaseTest {
     @DisplayName("RPF-CASE-001. Успешное заполнение обязательных полей формы регистрации")
     void shouldRegisterUserWhenARequiredFieldsAreValid() {
         // Given
-        reservePracticeFormPage.openPage(env);
-        executeJavaScript("$('#fixedban').remove();");
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        UserDto userDto = TestData.getRegistrationUserShort();
 
         // When
         reservePracticeFormPage
-                .setFirstName(TestData.FIRST_NAME_3)
-                .setLastName(TestData.LAST_NAME_3)
-                .setUserGender(TestData.USER_GENDER_3)
-                .setUserNumber(TestData.USER_NUMBER_3)
+                .openPage(env)
+                .registerAs(userDto)
                 .submit();
 
         // Then
         ResultTableComponent resultTable = reservePracticeFormPage.getResultTableComponent();
-        String expectedFullName = TestData.FIRST_NAME_3 + " " + TestData.LAST_NAME_3;
-
-        resultTable.shouldHaveRowContainingText("Student Name", expectedFullName);
-        resultTable.shouldHaveRowContainingText("Gender", TestData.USER_GENDER_3);
-        resultTable.shouldHaveRowContainingText("Mobile", TestData.USER_NUMBER_3);
+        resultTable.shouldHaveRowContainingText("Student Name", userDto.getFullName());
+        resultTable.shouldHaveRowContainingText("Gender", userDto.getGender());
+        resultTable.shouldHaveRowContainingText("Mobile", userDto.getPhoneNumber());
     }
 
     // ---------- Негативные тесты
@@ -59,17 +52,13 @@ public class ReservePracticeFormTest extends BaseTest {
                                                 Function<ReservePracticeFormPage, SelenideElement> fieldProvider,
                                                 String value) {
         // Given
-        reservePracticeFormPage.openPage(env);
-        executeJavaScript("$('#fixedban').remove();");
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        UserDto userDto = TestData.getRegistrationUserShort();
 
         // When
         // Заполнение обязательных полей
         reservePracticeFormPage
-                .setFirstName(TestData.FIRST_NAME_3)
-                .setLastName(TestData.LAST_NAME_3)
-                .setUserGender(TestData.USER_GENDER_3)
-                .setUserNumber(TestData.USER_NUMBER_3);
+                .openPage(env)
+                .registerAs(userDto);
         // Перезатираем поле и подтверждаем
         SelenideElement field = fieldProvider.apply(reservePracticeFormPage);
         field

@@ -2,7 +2,10 @@ package qa.guru.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import qa.guru.config.Environment;
+import qa.guru.data.UserDto;
 import qa.guru.pages.components.CalendarComponent;
 import qa.guru.pages.components.ResultTableComponent;
 
@@ -115,5 +118,35 @@ public class PracticeFormPage {
 
     public SelenideElement getTableResult() {
         return resultTableComponent.getTableResult();
+    }
+
+    public PracticeFormPage registerAs(UserDto userDto) {
+        // Блок дня рождения - все поля должны быть заполнены
+        if (StringUtils.isNotBlank(userDto.getBirthYear()) &&
+                StringUtils.isNotBlank(userDto.getBirthMonth()) &&
+                StringUtils.isNotBlank(userDto.getBirthDay())) {
+
+            setUserDateOfBirth(userDto.getBirthYear(), userDto.getBirthMonth(), userDto.getBirthDay());
+        }
+
+        // Несвязные блоки
+        if (StringUtils.isNotBlank(userDto.getFirstName())) setFirstName(userDto.getFirstName());
+        if (StringUtils.isNotBlank(userDto.getLastName())) setLastName(userDto.getLastName());
+        if (StringUtils.isNotBlank(userDto.getGender())) setUserGender(userDto.getGender());
+        if (StringUtils.isNotBlank(userDto.getPhoneNumber())) setUserNumber(userDto.getPhoneNumber());
+
+        if (StringUtils.isNotBlank(userDto.getEmail())) setUserEmail(userDto.getEmail());
+        if (CollectionUtils.isNotEmpty(userDto.getSubjects())) setSubjects(userDto.getSubjects());
+        if (CollectionUtils.isNotEmpty(userDto.getHobbies())) setHobbies(userDto.getHobbies());
+        if (StringUtils.isNotBlank(userDto.getPicture())) uploadPicture(userDto.getPicture());
+        if (StringUtils.isNotBlank(userDto.getCurrentAddress())) setUserAddress(userDto.getCurrentAddress());
+
+        // Установка штата и города
+        if (StringUtils.isNotBlank(userDto.getState()) && StringUtils.isNotBlank(userDto.getState())) {
+            setUserState(userDto.getState());
+            setUserCity(userDto.getCity());
+        }
+
+        return this;
     }
 }
